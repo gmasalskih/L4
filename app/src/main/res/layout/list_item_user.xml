@@ -10,7 +10,7 @@
 
         <variable
             name="clickListener"
-            type="com.example.l4.ui.home.ListUsersAdapter.UserClickListener" />
+            type="com.example.l4.ui.user_gallery.ListUsersAdapter.UserClickListener" />
     </data>
 
 
@@ -18,7 +18,7 @@
         android:id="@+id/user_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:onClick="@{()->clickListener.onClick(user)}"
         app:cardCornerRadius="10dp">
 

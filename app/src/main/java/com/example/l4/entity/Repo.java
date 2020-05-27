@@ -12,14 +12,17 @@ public class Repo {
     public String description;
 
     @SerializedName("stargazers_count")
-    public Integer stargazersCount;
+    public String stargazersCount;
 
     @SerializedName("watchers_count")
-    public Integer watchersCount;
+    public String watchersCount;
 
     @SerializedName("language")
     public String language;
 
     @SerializedName("forks_count")
-    public Integer forksCount;
+    public String forksCount;
+
+    @SerializedName("html_url")
+    public String htmlUrl;
 }

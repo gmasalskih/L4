@@ -3,23 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_user_gallery">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.example.l4.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home"/>
+        android:id="@+id/nav_user_gallery"
+        android:name="com.example.l4.ui.user_gallery.UserGalleryFragment"
+        android:label="@string/user_gallery"
+        tools:layout="@layout/fragment_user_gallery">
+        <action
+            android:id="@+id/action_nav_user_gallery_to_nav_repo_gallery"
+            app:destination="@id/nav_repo_gallery" />
+    </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.l4.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.l4.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_repo_gallery"
+        android:name="com.example.l4.ui.repo_gallery.RepoGalleryFragment"
+        android:label="@string/repo_gallery"
+        tools:layout="@layout/fragment_repo_gallery" >
+        <argument
+            android:name="login"
+            app:argType="string" />
+    </fragment>
 </navigation>

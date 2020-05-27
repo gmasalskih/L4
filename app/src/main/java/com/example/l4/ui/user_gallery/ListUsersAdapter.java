@@ -1,4 +1,4 @@
-package com.example.l4.ui.home;
+package com.example.l4.ui.user_gallery;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -9,14 +9,16 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.l4.R;
 import com.example.l4.databinding.ListItemUserBinding;
 import com.example.l4.entity.User;
+import com.squareup.picasso.Picasso;
 
 public class ListUsersAdapter extends ListAdapter<User, ListUsersAdapter.ViewHolder> {
 
     private UserClickListener clickListener;
 
-    public ListUsersAdapter(UserClickListener clickListener) {
+    ListUsersAdapter(UserClickListener clickListener) {
         super(new DiffCallback());
         this.clickListener = clickListener;
     }
@@ -33,7 +35,7 @@ public class ListUsersAdapter extends ListAdapter<User, ListUsersAdapter.ViewHol
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         private ListItemUserBinding binding;
 
@@ -42,15 +44,22 @@ public class ListUsersAdapter extends ListAdapter<User, ListUsersAdapter.ViewHol
             this.binding = binding;
         }
 
-        public static ViewHolder from(ViewGroup parent) {
+        static ViewHolder from(ViewGroup parent) {
             LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
             ListItemUserBinding binding = ListItemUserBinding.inflate(layoutInflater, parent, false);
             return new ViewHolder(binding);
         }
 
-        public void bind(User user, UserClickListener clickListener) {
+        void bind(User user, UserClickListener clickListener) {
             binding.setUser(user);
             binding.setClickListener(clickListener);
+            Picasso.get()
+                    .load(user.avatarUrl)
+                    .placeholder(R.drawable.ic_account_box)
+                    .error(R.drawable.ic_block)
+                    .resize(60, 60)
+                    .centerCrop()
+                    .into(binding.imageView2);
         }
     }
 
@@ -71,7 +80,7 @@ public class ListUsersAdapter extends ListAdapter<User, ListUsersAdapter.ViewHol
 
         private Consumer<User> consumer;
 
-        public UserClickListener(Consumer<User> consumer) {
+        UserClickListener(Consumer<User> consumer) {
             this.consumer = consumer;
         }
 
