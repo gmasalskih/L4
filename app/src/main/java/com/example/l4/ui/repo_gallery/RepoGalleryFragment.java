@@ -65,3 +65,4 @@ public class RepoGalleryFragment extends Fragment {
         Toast.makeText(requireContext(), repo.htmlUrl, Toast.LENGTH_LONG).show();
     }
 }
+
