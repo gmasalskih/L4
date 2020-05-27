@@ -63,7 +63,6 @@ public class RepoGalleryFragment extends Fragment {
 
     private void onRepoSelected(Repo repo) {
         Toast.makeText(requireContext(), repo.htmlUrl, Toast.LENGTH_LONG).show();
-
     }
 }
 
