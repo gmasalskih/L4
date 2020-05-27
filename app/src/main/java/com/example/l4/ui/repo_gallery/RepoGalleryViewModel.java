@@ -63,3 +63,4 @@ public class RepoGalleryViewModel extends ViewModel {
         clearDisposable();
     }
 }
+
