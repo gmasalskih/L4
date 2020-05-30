@@ -52,12 +52,11 @@ public class UserGalleryViewModel extends ViewModel {
     }
 
     private Observable<List<User>> getSortedListUser(TextViewTextChangeEvent charSequence) {
-        List<User> list = new ArrayList<>();
         if (_users.getValue() == null) return Observable.just(new ArrayList<>());
-        for (User user : _users.getValue())
-            if (user.login.toLowerCase().contains(charSequence.getText().toString().toLowerCase()))
-                list.add(user);
-        return Observable.just(list);
+        return Observable.fromIterable(_users.getValue())
+                .filter(user -> user.login.toLowerCase().contains(charSequence.getText().toString().toLowerCase()))
+                .toList()
+                .toObservable();
     }
 
     @Override
