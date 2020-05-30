@@ -1,8 +1,6 @@
 package com.example.l4.ui.user_gallery;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +14,7 @@ import androidx.navigation.Navigation;
 
 import com.example.l4.databinding.FragmentUserGalleryBinding;
 import com.example.l4.entity.User;
+import com.jakewharton.rxbinding3.widget.RxTextView;
 
 public class UserGalleryFragment extends Fragment {
 
@@ -47,20 +46,8 @@ public class UserGalleryFragment extends Fragment {
                 .observe(getViewLifecycleOwner(), userList -> adapter.submitList(userList));
         viewModel.getFilteredUsers()
                 .observe(getViewLifecycleOwner(), userList -> adapter.submitList(userList));
-        binding.enterLogin.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                viewModel.userFilter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        viewModel.userFilter(RxTextView.textChangeEvents(binding.enterLogin));
     }
 
     private void onUserSelected(User user) {
