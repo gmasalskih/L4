@@ -25,11 +25,12 @@ public class UserGalleryFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(this).get(UserGalleryViewModel.class);
+        viewModel = new ViewModelProvider(this, new UserViewModelFactory(getActivity().getApplication())).get(UserGalleryViewModel.class);
         adapter = new ListUsersAdapter(new ListUsersAdapter.UserClickListener(this::onUserSelected));
         binding = FragmentUserGalleryBinding.inflate(inflater, container, false);
         binding.listUsers.setAdapter(adapter);
         binding.setLifecycleOwner(UserGalleryFragment.this);
+        binding.setViewModel(viewModel);
         setHasOptionsMenu(true);
         return binding.getRoot();
     }
@@ -38,6 +39,9 @@ public class UserGalleryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+        binding.saveBtn.setText("Save to DB");
+        binding.loadBtn.setText("Load from DB");
+
         initObservers();
     }
 
@@ -46,7 +50,10 @@ public class UserGalleryFragment extends Fragment {
                 .observe(getViewLifecycleOwner(), userList -> adapter.submitList(userList));
         viewModel.getFilteredUsers()
                 .observe(getViewLifecycleOwner(), userList -> adapter.submitList(userList));
-
+        viewModel.saveTime()
+                .observe(getViewLifecycleOwner(), msg -> binding.saveBtn.setText(msg));
+        viewModel.loadTime()
+                .observe(getViewLifecycleOwner(), msg -> binding.loadBtn.setText(msg));
         viewModel.userFilter(RxTextView.textChangeEvents(binding.enterLogin));
     }
 

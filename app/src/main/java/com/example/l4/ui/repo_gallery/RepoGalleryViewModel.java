@@ -10,6 +10,7 @@ import com.example.l4.entity.Repo;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -36,7 +37,8 @@ public class RepoGalleryViewModel extends ViewModel {
         API.GitHubService api = API.getInstance().getApi();
         compositeDisposable.add(api.getReposOfUser(login).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repos -> _repos.setValue(repos)));
-        compositeDisposable.add(subject.subscribeOn(Schedulers.computation())
+        compositeDisposable.add(subject
+                .observeOn(Schedulers.computation())
                 .map(this::getSortedListUser)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repos -> _filteredRepos.setValue(repos)));
