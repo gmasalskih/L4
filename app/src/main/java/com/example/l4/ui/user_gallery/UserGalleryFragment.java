@@ -1,8 +1,6 @@
 package com.example.l4.ui.user_gallery;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +14,7 @@ import androidx.navigation.Navigation;
 
 import com.example.l4.databinding.FragmentUserGalleryBinding;
 import com.example.l4.entity.User;
+import com.jakewharton.rxbinding3.widget.RxTextView;
 
 public class UserGalleryFragment extends Fragment {
 
@@ -26,11 +25,12 @@ public class UserGalleryFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(this).get(UserGalleryViewModel.class);
+        viewModel = new ViewModelProvider(this, new UserViewModelFactory(getActivity().getApplication())).get(UserGalleryViewModel.class);
         adapter = new ListUsersAdapter(new ListUsersAdapter.UserClickListener(this::onUserSelected));
         binding = FragmentUserGalleryBinding.inflate(inflater, container, false);
         binding.listUsers.setAdapter(adapter);
         binding.setLifecycleOwner(UserGalleryFragment.this);
+        binding.setViewModel(viewModel);
         setHasOptionsMenu(true);
         return binding.getRoot();
     }
@@ -39,6 +39,9 @@ public class UserGalleryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+        binding.saveBtn.setText("Save to DB");
+        binding.loadBtn.setText("Load from DB");
+
         initObservers();
     }
 
@@ -47,20 +50,11 @@ public class UserGalleryFragment extends Fragment {
                 .observe(getViewLifecycleOwner(), userList -> adapter.submitList(userList));
         viewModel.getFilteredUsers()
                 .observe(getViewLifecycleOwner(), userList -> adapter.submitList(userList));
-        binding.enterLogin.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                viewModel.userFilter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        viewModel.saveTime()
+                .observe(getViewLifecycleOwner(), msg -> binding.saveBtn.setText(msg));
+        viewModel.loadTime()
+                .observe(getViewLifecycleOwner(), msg -> binding.loadBtn.setText(msg));
+        viewModel.userFilter(RxTextView.textChangeEvents(binding.enterLogin));
     }
 
     private void onUserSelected(User user) {

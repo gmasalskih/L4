@@ -4,20 +4,26 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.l4.MyApplication;
 import com.example.l4.api.API;
 import com.example.l4.entity.Repo;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 public class RepoGalleryViewModel extends ViewModel {
 
-    private List<Disposable> disposables = new ArrayList<>();
+    @Inject
+    public API.GitHubService api;
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private PublishSubject<CharSequence> subject = PublishSubject.create();
 
     private MutableLiveData<List<Repo>> _repos = new MutableLiveData<>();
@@ -32,35 +38,34 @@ public class RepoGalleryViewModel extends ViewModel {
         return _filteredRepos;
     }
 
-    RepoGalleryViewModel(String login){
-        API.GitHubService api = API.getInstance().getApi();
-        disposables.add(api.getReposOfUser(login).observeOn(AndroidSchedulers.mainThread())
+    RepoGalleryViewModel(String login) {
+
+        MyApplication.getDi().injectToRepoGallery(this);
+        compositeDisposable.add(api.getReposOfUser(login).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repos -> _repos.setValue(repos)));
-        disposables.add(subject.subscribeOn(Schedulers.computation())
-                .map(charSequence->{
-                    List<Repo> list = new ArrayList<>();
-                    for (Repo repo:_repos.getValue())
-                        if (repo.name.toLowerCase().contains(charSequence.toString().toLowerCase())) list.add(repo);
-                    return list;
-                }).observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(subject
+                .observeOn(Schedulers.computation())
+                .map(this::getSortedListUser)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repos -> _filteredRepos.setValue(repos)));
-
     }
 
-    private void clearDisposable() {
-        for (Disposable d : disposables) d.dispose();
-        disposables.clear();
-    }
-
-
-    void repoFilter(CharSequence s){
+    void repoFilter(CharSequence s) {
         subject.onNext(s);
+    }
+
+    private List<Repo> getSortedListUser(CharSequence charSequence){
+        List<Repo> list = new ArrayList<>();
+        if (_repos.getValue() == null) return list;
+        for (Repo repo : _repos.getValue())
+            if (repo.name.toLowerCase().contains(charSequence.toString().toLowerCase()))
+                list.add(repo);
+        return list;
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        clearDisposable();
+        compositeDisposable.dispose();
     }
 }
-

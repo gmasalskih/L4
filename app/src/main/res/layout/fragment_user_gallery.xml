@@ -5,9 +5,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.user_gallery.UserGalleryFragment">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.l4.ui.user_gallery.UserGalleryViewModel" />
+
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/save_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:onClick="@{()->viewModel.saveUsersToDb()}"
+            app:layout_constraintEnd_toStartOf="@+id/button3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/button3" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Clear DB"
+            android:onClick="@{()->viewModel.clearDb()}"
+            app:layout_constraintEnd_toStartOf="@+id/load_btn"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/save_btn"
+            app:layout_constraintTop_toBottomOf="@+id/enter_login" />
+
+        <Button
+            android:id="@+id/load_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:onClick="@{()->viewModel.loadUsersFromDb()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/button3"
+            app:layout_constraintTop_toTopOf="@+id/button3" />
 
         <EditText
             android:id="@+id/enter_login"
@@ -22,6 +65,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_users"
             android:layout_width="match_parent"
@@ -31,7 +75,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/enter_login" />
+            app:layout_constraintTop_toBottomOf="@+id/button3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
