@@ -7,9 +7,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.l4.MyApplication;
 import com.example.l4.api.API;
 import com.example.l4.api.DAO;
-import com.example.l4.api.DB;
 import com.example.l4.entity.User;
 import com.jakewharton.rxbinding3.InitialValueObservable;
 import com.jakewharton.rxbinding3.widget.TextViewTextChangeEvent;
@@ -17,6 +17,8 @@ import com.jakewharton.rxbinding3.widget.TextViewTextChangeEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
@@ -29,7 +31,12 @@ import io.reactivex.schedulers.Schedulers;
 public class UserGalleryViewModel extends AndroidViewModel {
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private DAO db;
+
+    @Inject
+    public DAO db;
+
+    @Inject
+    public API.GitHubService api;
 
     private MutableLiveData<List<User>> _users = new MutableLiveData<>();
 
@@ -55,10 +62,11 @@ public class UserGalleryViewModel extends AndroidViewModel {
         return _filteredUsers;
     }
 
+
+
     public UserGalleryViewModel(Application application) {
         super(application);
-        db = DB.getInstance(application.getApplicationContext()).getDao();
-        API.GitHubService api = API.getInstance().getApi();
+        MyApplication.getDi().injectToUserGallery(this);
         compositeDisposable.add(api.getUsers()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userList -> _users.setValue(userList)));

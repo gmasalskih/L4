@@ -4,19 +4,24 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.l4.MyApplication;
 import com.example.l4.api.API;
 import com.example.l4.entity.Repo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 public class RepoGalleryViewModel extends ViewModel {
+
+    @Inject
+    public API.GitHubService api;
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private PublishSubject<CharSequence> subject = PublishSubject.create();
@@ -34,7 +39,8 @@ public class RepoGalleryViewModel extends ViewModel {
     }
 
     RepoGalleryViewModel(String login) {
-        API.GitHubService api = API.getInstance().getApi();
+
+        MyApplication.getDi().injectToRepoGallery(this);
         compositeDisposable.add(api.getReposOfUser(login).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repos -> _repos.setValue(repos)));
         compositeDisposable.add(subject
